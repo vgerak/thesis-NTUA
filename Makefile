@@ -2,10 +2,6 @@
 
 FILE=thesis
 
-export SHELL=/bin/bash
-export TEXINPUTS:=.:./Styles//:${TEXINPUTS}
-export BSTINPUTS:=.:./Styles//:${BSTINPUTS}
-
 default: $(FILE).pdf
 
 %.pdf: %.tex FORCE
@@ -14,6 +10,7 @@ default: $(FILE).pdf
 clean:
 	$(RM) *.{dvi,aux,log,toc,lof,lol,lot,dlog,bbl,blg,idx,out,tpt,svn,synctex.gz}
 	$(RM) *.{nav,snm,vrb,fls,fdb_latexmk} *~ *.bak
+	$(RM) Chapters/*.aux
 
 distclean: clean
 	$(RM) $(FILE).{dvi,ps,pdf}

@@ -1,4 +1,4 @@
-I% BibTeX bibliography style `nickie'
+% BibTeX bibliography style `nickie'
 % Author: Nikolaos S. Papaspyrou (nickie@softlab.ntua.gr)
 % Created: October 16, 1995
 % Revised: June 24, 2002
@@ -652,7 +652,7 @@ FUNCTION {tie.or.space.connect}
 % Parameter 1: item to be printed
 % Parameter 2: item to be printed
 % Result:      parameter 1 followed by space (hard or soft) and parameter 2
-% 
+%
 % The space will be short, in any case
 
 FUNCTION {tie.or.sspace.connect}
@@ -1070,7 +1070,7 @@ FUNCTION {article}
 %    start...
 %    authors x-or editors                   \newblock
 %    title, volume                          \newblock
-%    number, series                         
+%    number, series
 %    publisher, address, edition, date      \newblock
 %    note
 %    finish...
@@ -1142,7 +1142,7 @@ FUNCTION {booklet}
 %    authors x-or editors                   \newblock
 %    title, volume                          \newblock
 %    chapter, pages                         \newblock
-%    number, series                        
+%    number, series
 %    publisher, address, edition, date      \newblock
 %    note
 %    finish...
@@ -1188,7 +1188,7 @@ FUNCTION {inbook}
 %    start...
 %    authors                                             \newblock
 %    title                                               \newblock
-%    booktitle, volume, number, series, chapter, pages   
+%    booktitle, volume, number, series, chapter, pages
 %    publisher, address, edition, date                   \newblock
 %    note
 %    finish...
@@ -1226,7 +1226,7 @@ FUNCTION {incollection}
 %    start...
 %    authors                             \newblock
 %    title                               \newblock
-%    booktitle, volume, number, pages   
+%    booktitle, volume, number, pages
 %    organization, publisher, address    { not exactly! }
 %    date                                \newblock
 %    note
@@ -1842,7 +1842,7 @@ ITERATE {forward.pass}
 REVERSE {reverse.pass}
 
 FUNCTION {begin.bib}
-{ 
+{
   "\providecommand\nbibitem[5][]{\bibitem[#1]{#2}}" write$ newline$
   preamble$ empty$
     'skip$

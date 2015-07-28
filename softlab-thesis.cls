@@ -271,19 +271,22 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % roman font
-%\def\font@roman{Times New Roman}
-\def\font@roman{CMU Serif}
+\def\font@roman{Linux Libertine O}
+%\def\font@roman{CMU Serif}
+%\def\font@roman{DejaVu Serif}
+%\def\font@roman{FreeSerif}
 
 % sans serif font
-\def\font@sans{CMU Sans Serif}
-%\def\font@sans{Liberation Sans}
+\def\font@sans{Linux Biolinum O}
+%\def\font@sans{CMU Sans Serif}
+%\def\font@sans{DejaVu Sans}
+%\def\font@sans{FreeSans}
 
 % typewriter font
-\def\font@tt{CMU Typewriter Text}
+\def\font@tt{Linux Libertine Mono O}
+%\def\font@tt{CMU Typewriter Text}
 %\def\font@tt{DejaVu Sans Mono}
-%\def\font@tt{Lucida Sans Typewriter}
-%\def\font@tt{Free Monospaced}
-%\def\font@tt{Bitstream Vera Sans Mono}
+%\def\font@tt{FreeMono}
 
 \setromanfont{\font@roman}
 \setsansfont[Scale=MatchLowercase]{\font@sans}
@@ -294,20 +297,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \RequirePackage{polyglossia}
-\if@greek
 \newfontfamily\greekfont{\font@roman}
 \newfontfamily\greekfontsf[Scale=MatchLowercase]{\font@sans}
 \newfontfamily\greekfonttt[Script=grek,Scale=MatchLowercase]{\font@tt}
-%\newfontfamily\greekfont{Times New Roman}
-%\newfontfamily\greekfont[Script=grek]{Liberation Serif}
-%\newfontfamily\greekfontsf[Scale=MatchLowercase]{Arial}
-%\newfontfamily\greekfontsf[Script=grek,Scale=MatchLowercase]{Liberation Sans}
-%\newfontfamily\greekfonttt[Script=grek,Scale=MatchLowercase]{Liberation Mono}
 \setdefaultlanguage[variant=mono,numerals=arabic]{greek}
-\setotherlanguage{english}
-\else
+%\setotherlanguage{english}
 \setdefaultlanguage{english}
-\fi
 
 % Headings
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -410,14 +405,8 @@
 \def\@committee@three@pos{}\def\committeethreepos#1{\gdef\@committee@three@pos{#1}}
 \def\@subtitle{}         \def\subtitle#1{\gdef\@subtitle{#1}}
 \def\@thesistype{}       \def\thesistype#1{\gdef\@thesistype{#1}}
-\if@greek
 \def\@institution{}      \def\institution#1{\gdef\@institution{#1}}
 \def\@institution@gen{}  \def\institutiongen#1{\gdef\@institution@gen{#1}}
-\else
-\def\@institution{}      \def\institution#1{\gdef\@institution{#1}
-                                            \gdef\@institution@gen{#1}}
-\def\@institution@gen{}
-\fi
 \def\@school{}           \def\school#1{\gdef\@school{#1}}
 \def\@department{}       \def\department#1{\gdef\@department{#1}}
 \def\@dedication{}       \def\dedication#1{\def\@dedication{#1}}
@@ -439,20 +428,12 @@
 \def\new@tpage{\newpage\thispagestyle{empty}\null}
 
 \def\authorsig#1{\gdef\@authorsig{#1}}
-\if@greek
   \ifcase\c@type
   \or\authorsig{Διπλωματούχος Ηλεκτρολόγος Μηχανικός
                 και Μηχανικός Υπολογιστών Ε.Μ.Π.}
   \or\authorsig{}
   \or\authorsig{Διδάκτωρ Πληροφορικής Ε.Μ.Π.}
   \fi
-\else
-  \ifcase\c@type
-  \or\authorsig{Electrical and Computer Engineer}
-  \or\authorsig{}
-  \or\authorsig{Dr.\ Computer Egineer}
-  \fi
-\fi
 
 \def\authoren#1{\gdef\@authoren{#1}}
 \def\@author@and{\end{tabular}\hskip 1em plus.17fil
@@ -460,14 +441,7 @@
 \def\@committeemembers@and{\\ &}
 \let\and\relax
 
-\if@greek
-  \def\@location{Αθήνα}
-\else
-  \def\@location{Athens}
-  \let\old@author\author
-  \def\author#1{\old@author{#1}\authoren{#1}}
-\fi
-
+\def\@location{Αθήνα}
 \def\@locationen{Athens}
 \def\@locationgr{Αθήνα}
 
@@ -546,11 +520,7 @@
   \let\and\@author@and%
   {\a@font%
   \begin{tabular}[t]{@{}l@{}}%
-  \if@greek
   \uppercase\expandafter{\@author}%
-  \else
-  \uppercase\expandafter{\@authoren}%
-  \fi
   \end{tabular}}%
   \let\and\old@and%
   \end{center}
@@ -567,7 +537,7 @@
   \vfill
 %
   \begin{center}
-  {\st@font \@location, \if@greek\@date\else\@dateen\fi}
+  {\st@font \@location, \@date}
   \end{center}
 %
 \ifcase\c@type
@@ -634,11 +604,7 @@
   \vspace{1.0cm}\par
 %
   \noindent
-  \if@greek
   Εγκρίθηκε από την τριμελή εξεταστική επιτροπή την \@date@defense.
-  \else
-  Approved by the examining committee on the \@date@defenseen.
-  \fi
   }
 %
   \vspace{1.5cm}\par
@@ -663,7 +629,7 @@
   \vfill
 %
   \begin{center}
-  {\st@font \@location, \if@greek\@date\else\@dateen\fi}
+  {\st@font \@location, \@date}
   \end{center}
 \or%%%%%%%%%%%%%%%%%%%%%% μΠλ∀ M.Sc. thesis %%%%%%%%%%%%%%%%%%%%%%
   \cleardoublepage
@@ -1474,13 +1440,12 @@
     Η εργασία αυτή είναι επίσης διαθέσιμη ως Τεχνική Αναφορά
     \@TRnumber, Εθνικό Μετσόβιο Πολυτεχνείο, Σχολή Ηλεκτρολόγων
     Μηχανικών και Μηχανικών Υπολογιστών, Τομέας Τεχνολογίας
-    Πληροφορικής και Υπολογιστών, Εργαστήριο Τεχνολογίας
-    Λογισμικού, \@date.
+    Πληροφορικής και Υπολογιστών, Εργαστήριο Υπολογιστικών Συστημάτων, \@date.
     \\[6pt]
-    \begin{tabular}{@{}ll@{}}
-    URL: & \texttt{http://www.softlab.ntua.gr/techrep/} \\
-    FTP: & \texttt{ftp://ftp.softlab.ntua.gr/pub/techrep/}
-    \end{tabular}
+    % \begin{tabular}{@{}ll@{}}
+    % URL: & \texttt{http://www.softlab.ntua.gr/techrep/} \\
+    % FTP: & \texttt{ftp://ftp.softlab.ntua.gr/pub/techrep/}
+    % \end{tabular}
   }
   \newpage%
   \endgroup%
@@ -1503,12 +1468,12 @@
     National Technical University of Athens,
     School of Electrical and Computer Engineering,
     Department of Computer Science,
-    Software Engineering Laboratory, \@dateen.
+    Computer Systems Laboratory, \@dateen.
     \\[6pt]
-    \begin{tabular}{@{}ll@{}}
-    URL: & \texttt{http://www.softlab.ntua.gr/techrep/} \\
-    FTP: & \texttt{ftp://ftp.softlab.ntua.gr/pub/techrep/}
-    \end{tabular}
+    % \begin{tabular}{@{}ll@{}}
+    % URL: & \texttt{http://www.softlab.ntua.gr/techrep/} \\
+    % FTP: & \texttt{ftp://ftp.softlab.ntua.gr/pub/techrep/}
+    % \end{tabular}
   }
   \newpage%
   \endgroup%
@@ -1549,7 +1514,6 @@
 
 \def\@author@accusative{τον συγγραφέα}
 
-\if@greek
 \institution{Εθνικό Μετσόβιο Πολυτεχνείο}
 \institutiongen{Εθνικού Μετσόβιου Πολυτεχνείου}
 \school{Σχολή Ηλεκτρολόγων Μηχανικών \\ και Μηχανικών Υπολογιστών}
@@ -1564,44 +1528,24 @@
        και Υπολογισμού}
   \or\thesistype{Διδακτορική Διατριβή}
 \fi
-\else
-\institution{National Technical University of Athens}
-\school{School of Electrical and Computer Engineering}
-\department{Department of Computer Science}
-\ifcase\c@type
-  \or\thesistype{Diploma Project}
-  \or\thesistype{M.Sc. Thesis}
-     \institution{National and Kapodistrian University of Athens}
-     \school{Department of Mathematics}
-     \department{Graduate Program in Logic and Theory of
-       Algorithms and Computation}
-  \or\thesistype{Doctoral Dissertation}
-\fi
-\fi
-\trurl{http://www.softlab.ntua.gr/techrep/}
-\trftp{ftp://ftp.softlab.ntua.gr/pub/techrep/}
+%\trurl{http://www.softlab.ntua.gr/techrep/}
+%\trftp{ftp://ftp.softlab.ntua.gr/pub/techrep/}
 
 \uppertitleback{%
   \vspace*{4cm}%
   {\large%
   \signature[6pt]{%
-    \textbf{\uppercase{\if@greek\@author\else\@authoren\fi}}
+    \textbf{\uppercase{\@author}}
   }{%
     \@authorsig
   }}
 }
 \lowertitleback{%
   {\large
-\if@greek
   Copyright \copyright\ \ \@author, \@date@year.\\
   Με επιφύλαξη παντός δικαιώματος.  All rights reserved.\\[12pt]
-\else
-  Copyright \copyright\ \ \@authoren, \@date@year.\\
-  All rights reserved.\\[12pt]
-\fi
   }
 
-\if@greek
   Απαγορεύεται η αντιγραφή, αποθήκευση και διανομή της παρούσας
   εργασίας, εξ ολοκλήρου ή τμήματος αυτής, για εμπορικό σκοπό.
   Επιτρέπεται η ανατύπωση, αποθήκευση και διανομή για σκοπό μη
@@ -1614,18 +1558,6 @@
   έγγραφο εκφράζουν \@author@accusative{} και δεν πρέπει να
   ερμηνευθεί ότι αντιπροσωπεύουν τις επίσημες θέσεις του
   \@institution@gen.
-\else
-  This work is copyright and may not be reproduced, stored nor
-  distributed in whole or in part for commercial purposes.  Permission
-  is hereby granted to reproduce, store and distribute this work for
-  non-propfit, educational and research purposes, provided that the
-  source is acknowledged and the present copyright message is retained.
-  Enquiries regarding use for profit should be directed to the author.
-\medskip\par
-  The views and conclusions contained in this document are those
-  of the author and should not be interpreted as representing the
-  official policies, either expressed or implied, of the \@institution.
-\fi
   \vspace*{2cm}
 }
 \def\cr@comma{, }
