@@ -1,24 +1,96 @@
+% !TEX root = ../thesis.tex
+
 \chapter{Background}
-
-% databases, τι είναι OpenStack,
-% τι είναι S3,
-% τι είναι APIs,
 % containers
-% Επίσης, ποιο related work υπάρχει, ποια
-% πακέτα είναι ανταγωνιστικά (Google Drive, Dropbox)
-
 % εδώ θα πρέπει να υπάρχει το workflow του πώς βλέπεις να χρησιμοποιείται ο
 % syncer σε περιβάλλον cloud: Πώς θα μπορεί να υπάρξει ένα workflow από τον
 % υπολογιστή του χρήστη μέχρι την πλατφόρμα IaaS.
 
-\section{BG 1}
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+\section{Data Synchronisation}
+  Data synchronization is the process of establishing consistency among data from a source to a target data storage and vice versa and the continuous harmonization of the data over time.
+  File Synchronisation (or syncing) is the process of ensuring that files in two or more locations are updated by certain rules. In \emph{one-way file synchronization}, also called mirroring, updated files are copied from a `source' location to one or more `target' locations, but no files are copied back to the source location. In \emph{two-way file synchronization}, updated files are copied in both directions, usually with the purpose of keeping the two locations identical to each other
 
-\section{BG 2}
-  Nulla lectus justo, vulputate non euismod quis, sagittis sit amet sem.
-  \subsection{BG 2.1}
-    Donec euismod ante non felis condimentum efficitur. Nunc vel pretium diam.
-  \subsection{BG 2.2}
-    Mauris id lobortis quam, vitae convallis ipsum. Etiam eget hendrerit purus.
-    Aenean ante orci, porta in turpis at, congue posuere dui.
 
+\section{File Hosting Service}
+  A file hosting service\cite{wiki-file-hosting} or cloud storage service, is an Internet hosting service specifically designed to host user files. It allows users to upload files that could then be accessed over the internet from a different computer, tablet, smart phone or other networked device, by the same user or possibly by other users, after a password or other authentication is provided. File hosting services often offer file sync and sharing services, most notable consumer products being Dropbox and Google Drive.
+
+
+\section{Application programming interface}
+  Application programming interface (API) is a set of routines, protocols, and tools for building software applications. An API expresses a software component in terms of its operations, inputs, outputs, and underlying types. An API defines functionalities that are independent of their respective implementations, which allows definitions and implementations to vary without compromising the interface. APIs often come in the form of a library that includes specifications for routines, data structures, object classes, and variables. In other cases, such as REST services, an API is simply a specification of remote calls exposed to the API consumers.
+
+  \subsection{Representational state transfer}
+    Representational State Transfer (REST) is a software architecture style for building scalable web services\cite{fielding-taylor-2000} REST gives a coordinated set of constraints to the design of components in a distributed hypermedia system that can lead to a more performant and maintainable architecture\cite{fielding-2000}.
+    RESTful systems typically, but not always, communicate over the Hypertext Transfer Protocol with the same HTTP verbs (GET, POST, PUT, DELETE, etc.) which web browsers use to retrieve web pages and to send data to remote servers.
+
+
+\section{OpenStack}
+  OpenStack\cite{openstack} is a free and open source cloud operating system that controls large pools of compute, storage, and networking resources throughout a datacenter. Users can manage those resources through a web-based dashboard, command-line tools, or a RESTful API. It is primarily being deployed as an infrastructure-as-a-service (IaaS). OpenStack offers support for both Object Storage and Block Storage.Object Storage is ideal for cost effective, scale-out storage. It provides a fully distributed, API-accessible storage platform that can be integrated directly into applications or used for backup, archiving and data retention. Block Storage allows block devices to be exposed and connected to compute instances for expanded storage, better performance and integration with enterprise storage platforms.
+
+  \subsection{Object Storage - Swift}
+    OpenStack Object Storage (Swift) is a scalable redundant storage system. Objects and files are written to multiple disk drives spread throughout servers in the data center, with the OpenStack software responsible for ensuring data replication and integrity across the cluster. Because OpenStack uses software logic to ensure data replication and distribution across different devices, inexpensive commodity hard drives and servers can be used.
+
+
+\section{Synnefo}
+  Synnefo\cite{synnefo} is an open source cloud stack, which offers Compute, Network, Image, Volume and Storage services, similar to the ones offered by OpenStack. Synnefo is written in Python and to improve third-party compatibility, it exposes the OpenStack APIs to users\cite{synnefo-api}. It is the software used for \textasciitilde okeanos\cite{okeanos}, an Infrastracture as a Service (IaaS) cloud service, provided by the Greek Research and Technology Network (GRNET) for the Greek Research and Academic Community. \textasciitilde okeanos offers a virtual compute/network service called Cyclades as well as a virtual storage service, called Pithos+.
+
+  \subsection{Pithos+}
+    Pithos+ is the Virtual Storage service of \textasciitilde okeanos, featuring cloud storage as well as file synchronisation and sharing services. Files stored in Pithos+ are accessible via the web UI or with the client software, which exists for Windows, MacOS and iOS systems. Linux users can access the files using \emph{kamaki}, the command line client for \textasciitilde okeanos resources. It is powered by the Pithos (File/Object Storage) services of synnefo.
+
+
+\section{Amazon Web Services}
+  Amazon Web Services (AWS) is a collection of remote computing services, also called web services, that make up a cloud-computing platform offered by Amazon.The most central and well-known of these services arguably include Amazon Elastic Compute Cloud (Amazon EC2) and Amazon Simple Storage Service (Amazon S3).
+
+  \subsection{Amazon S3}
+    Amazon S3\cite{amazon-s3} (Simple Storage Service) is an online file storage web service offered by Amazon Web Services. Amazon S3 provides storage through web services interfaces (REST, SOAP, and BitTorrent). It provides developers and IT teams with secure, durable, highly-scalable object storage, for a wide variety of use cases including cloud applications, content distribution, backup and archiving, disaster recovery, and big data analytics. Amazon S3 stores arbitrary objects up to 5 terabytes in size, each accompanied by up to 2 kilobytes of metadata. Objects are organized into buckets (each owned by an AWS account), and identified within each bucket by a unique, user-assigned key.
+
+\section{Dropbox}
+  Dropbox offers cloud storage, file synchronization, personal cloud, and client software. Dropbox synchronizes a directory so that it appears to be the same (with the same contents) regardless of which computer is used to view it. Files placed in this folder are also accessible via the Dropbox website. Dropbox is multi-platform, and is working on all major desktop and mobile OS. Originally, both the server and client software were primarily written in Python; since 2013 Dropbox has began migrating its backend infrastructure to Go. Dropbox depends on rsync, ships the librsync binary-delta library (which is written in C) and utilises delta encoding technology. When a file in a user's Dropbox folder is changed, Dropbox only uploads the pieces of the file that are changed when synchronizing, when possible. It currently uses Amazon's S3 storage system to store the files. Dropbox also provides a technology called LAN sync, which allows computers on a local area network to securely download files locally from each other instead of always hitting the central servers, improving syncing speed.
+
+\section{Google Drive}
+  Google Drive is a file storage and synchronization service created by Google. The Google Drive client communicates with Google Drive to cause updates on one side to be propagated to the other so they both normally contain the same data. Google Drive is also multi-platform, though there is no official Linux client software. The implementation and syncing algorithm underlying Google Drive are mostly unkown, due to the software being closed source.
+
+\section{ownCloud}
+  ownCloud\cite{owncloud} is a suite of client-server software for creating file hosting services and using them. ownCloud allows synchronisation of directories, similar to the way Dropbox operates. It is a free and open-source software and is multi-platform, with clients available for all major desktop and mobile OS. The server software is written in PHP and JavaScript languages. ownCloud's desktop syncing client depends and ships with csync\cite{csync}, which is a lightweight utility to synchronize files between two directories on a system or between multiple systems. The software does not currently support delta-sync (syncing only file changes).
+
+
+\section{Hash function}
+  A hash function is any function that can be used to map digital data of arbitrary size to digital data of fixed size. The values returned by a hash function are called hash values, hash codes, hash sums, or simply hashes. Hash functions accelerate table or database lookup by detecting duplicated records in a large file. Good hash functions should satisfy certain properties. Firstly, the function must be deterministic, meaning that for a given input value it must always generate the same hash value. A good hash function should map the expected inputs as evenly as possible over its output range - this property is called uniformity. This property minimises the chance of hash collisions (pairs of inputs that are mapped to the same hash value). For hash functions used in data search, it is desirable that the output of the function has fixed size, measured in bits.
+
+  \subsection{SHA-256}
+  The Secure Hash Algorithm is a family of cryptographic hash functions published by the National Institute of Standards and Technology (NIST) as a U.S. Federal Information Processing Standard (FIPS). \emph{SHA-2} is a family of two similar hash functions, with different block sizes, known as SHA-256 and SHA-512. They differ in the word size, with SHA-256 using 32-bit words where SHA-512 uses 64-bit words and have a hash value (digest) of 256 and 512 bits, respectively. They are considered to be secure and collision resistant, with SHA-256 having a collision probability of about $4.3*10^{-60}$ when digesting one billion ($10^9$) different messages.
+
+  \subsection{xxhash}
+  xxHash\cite{xxhash} is a non-cryptographic hash function designed around speed. It successfully completes the SMHasher test suite which evaluates collision, dispersion and randomness qualities of hash functions. xxHash's digests can be returned as bytes, integers or hex numbers and can be of 32 or 64 bit size.
+
+\section{Etag}
+  % TODO: Etag
+
+\section{Containers}
+  % TODO: Containers
+
+\section{Database}
+  A database-management system (DBMS) \cite{dbms-sil} is a collection of interrelated data and a set of programs to access those data. The collection of data, is referred to as the \emph{database.}
+
+  \subsection{Relational database}
+    A relational database uses a collection of tables to represent both data and the relationships among those data. Each table represents a relation variable, has multiple columns and each column has a unique name. The columns define the attributes and each row is an instance of the variable. The rows are uniquely identified by a certain attribute, called the \emph{primary key}.
+
+  \subsection{Transactional database}
+    A transactional database is one in which all changes and queries have the \textbf{ACID} \cite{acid} (Atomicity, Consistency, Isolation, Durability) set of properties. Those properties guarantee that database transactions are processed reliably even in the event of a transaction interruption.
+
+    \subsubsection{Atomicity}
+      The atomicity property ensures that in a transaction, a series of database operations either all occur, or nothing occurs. An atomic system must guarantee atomicity in every situation, including power failures, errors, and crashes. To the outside world, a committed transaction appears (by its effects on the database) to be indivisible ("atomic"), and an aborted transaction does not happen at all.
+
+    \subsubsection{Consistency}
+      The consistency property ensures that any transaction will bring the database from one valid state to another. Any data written to the database must be valid according to all defined rules, including constraints, cascades, triggers, and any combination thereof. This does not guarantee correctness of the transaction in all ways the application programmer might have wanted (that is the responsibility of application-level code) but merely that any programming errors cannot result in the violation of any defined rules.
+
+    \subsubsection{Isolation}
+      The isolation property ensures that the concurrent execution of transactions results in a system state that would be obtained if transactions were executed serially. Providing isolation is the main goal of concurrency control. Depending on concurrency control method, the effects of an incomplete transaction might not even be visible to another transaction.
+
+    \subsubsection{Durability}
+      Durability means that once a transaction has been committed, it will remain so, even in the event of power loss, crashes, or errors. In a relational database, once a group of SQL statements execute, the results need to be stored permanently (even if the database crashes immediately thereafter). To defend against power loss, transactions (or their effects) must be recorded in a non-volatile memory.
+
+  \subsection{Structured Query Language}
+    Structured Query Language (SQL) is a special-purpose programming language designed for managing data held in a relational database management system (RDBMS). The most important elements of the SQL language are the \emph{Statements}, which may have a persistent effect on schemata and data, or may control transactions, program flow, connections, sessions, or diagnostics and the \emph{Queries}, which retrieve data from the database, based on specific criteria.
+
+  \subsection{SQLite}
+    SQLite\cite{sqlite} is an open source, cross-platform RDBMS contained in a C programming library that offers a full SQL implementation. In contrast to many other database management systems, SQLite is not a client–server database engine. Rather, it is embedded into the end program and reads and writes directly to ordinary disk files. SQLite is transactional and as such, ACID-compliant. SQLite has a small code footprint and is widely used on memory and disk space constrained cases.
