@@ -1,14 +1,13 @@
 % !TEX root = ../thesis.tex
 
 \chapter{Background}
-% containers
 % εδώ θα πρέπει να υπάρχει το workflow του πώς βλέπεις να χρησιμοποιείται ο
 % syncer σε περιβάλλον cloud: Πώς θα μπορεί να υπάρξει ένα workflow από τον
 % υπολογιστή του χρήστη μέχρι την πλατφόρμα IaaS.
 
 \section{Data Synchronisation}
-  Data synchronization is the process of establishing consistency among data from a source to a target data storage and vice versa and the continuous harmonization of the data over time.
-  File Synchronisation (or syncing) is the process of ensuring that files in two or more locations are updated by certain rules. In \emph{one-way file synchronization}, also called mirroring, updated files are copied from a `source' location to one or more `target' locations, but no files are copied back to the source location. In \emph{two-way file synchronization}, updated files are copied in both directions, usually with the purpose of keeping the two locations identical to each other
+  Data synchronisation is the process of establishing consistency among data from a source to a target data storage and vice versa and the continuous harmonisation of the data over time.
+  File Synchronisation (or syncing) is the process of ensuring that files in two or more locations are updated by certain rules. In \emph{one-way file synchronisation}, also called mirroring, updated files are copied from a `source' location to one or more `target' locations, but no files are copied back to the source location. In \emph{two-way file synchronisation}, updated files are copied in both directions, usually with the purpose of keeping the two locations identical to each other
 
 
 \section{File Hosting Service}
@@ -24,14 +23,14 @@
 
 
 \section{OpenStack}
-  OpenStack\cite{openstack} is a free and open source cloud operating system that controls large pools of compute, storage, and networking resources throughout a datacenter. Users can manage those resources through a web-based dashboard, command-line tools, or a RESTful API. It is primarily being deployed as an infrastructure-as-a-service (IaaS). OpenStack offers support for both Object Storage and Block Storage.Object Storage is ideal for cost effective, scale-out storage. It provides a fully distributed, API-accessible storage platform that can be integrated directly into applications or used for backup, archiving and data retention. Block Storage allows block devices to be exposed and connected to compute instances for expanded storage, better performance and integration with enterprise storage platforms.
+  OpenStack\cite{openstack} is a free and open source cloud operating system that controls large pools of compute, storage, and networking resources throughout a data centre. Users can manage those resources through a web-based dashboard, command-line tools, or a RESTful API. It is primarily being deployed as an infrastructure-as-a-service (IaaS). OpenStack offers support for both Object Storage and Block Storage.Object Storage is ideal for cost effective, scale-out storage. It provides a fully distributed, API-accessible storage platform that can be integrated directly into applications or used for backup, archiving and data retention. Block Storage allows block devices to be exposed and connected to compute instances for expanded storage, better performance and integration with enterprise storage platforms.
 
   \subsection{Object Storage - Swift}
-    OpenStack Object Storage (Swift) is a scalable redundant storage system. Objects and files are written to multiple disk drives spread throughout servers in the data center, with the OpenStack software responsible for ensuring data replication and integrity across the cluster. Because OpenStack uses software logic to ensure data replication and distribution across different devices, inexpensive commodity hard drives and servers can be used.
+    OpenStack Object Storage (Swift) is a scalable redundant storage system. Objects and files are written to multiple disk drives spread throughout servers in the data centre, with the OpenStack software responsible for ensuring data replication and integrity across the cluster. Because OpenStack uses software logic to ensure data replication and distribution across different devices, inexpensive commodity hard drives and servers can be used.
 
 
 \section{Synnefo}
-  Synnefo\cite{synnefo} is an open source cloud stack, which offers Compute, Network, Image, Volume and Storage services, similar to the ones offered by OpenStack. Synnefo is written in Python and to improve third-party compatibility, it exposes the OpenStack APIs to users\cite{synnefo-api}. It is the software used for \textasciitilde okeanos\cite{okeanos}, an Infrastracture as a Service (IaaS) cloud service, provided by the Greek Research and Technology Network (GRNET) for the Greek Research and Academic Community. \textasciitilde okeanos offers a virtual compute/network service called Cyclades as well as a virtual storage service, called Pithos+.
+  Synnefo\cite{synnefo} is an open source cloud stack, which offers Compute, Network, Image, Volume and Storage services, similar to the ones offered by OpenStack. Synnefo is written in Python and to improve third-party compatibility, it exposes the OpenStack APIs to users\cite{synnefo-api}. It is the software used for \textasciitilde okeanos\cite{okeanos}, an Infrastructure as a Service (IaaS) cloud service, provided by the Greek Research and Technology Network (GRNET) for the Greek Research and Academic Community. \textasciitilde okeanos offers a virtual compute/network service called Cyclades as well as a virtual storage service, called Pithos+.
 
   \subsection{Pithos+}
     Pithos+ is the Virtual Storage service of \textasciitilde okeanos, featuring cloud storage as well as file synchronisation and sharing services. Files stored in Pithos+ are accessible via the web UI or with the client software, which exists for Windows, MacOS and iOS systems. Linux users can access the files using \emph{kamaki}, the command line client for \textasciitilde okeanos resources. It is powered by the Pithos (File/Object Storage) services of synnefo.
@@ -41,16 +40,16 @@
   Amazon Web Services (AWS) is a collection of remote computing services, also called web services, that make up a cloud-computing platform offered by Amazon.The most central and well-known of these services arguably include Amazon Elastic Compute Cloud (Amazon EC2) and Amazon Simple Storage Service (Amazon S3).
 
   \subsection{Amazon S3}
-    Amazon S3\cite{amazon-s3} (Simple Storage Service) is an online file storage web service offered by Amazon Web Services. Amazon S3 provides storage through web services interfaces (REST, SOAP, and BitTorrent). It provides developers and IT teams with secure, durable, highly-scalable object storage, for a wide variety of use cases including cloud applications, content distribution, backup and archiving, disaster recovery, and big data analytics. Amazon S3 stores arbitrary objects up to 5 terabytes in size, each accompanied by up to 2 kilobytes of metadata. Objects are organized into buckets (each owned by an AWS account), and identified within each bucket by a unique, user-assigned key.
+    Amazon S3\cite{amazon-s3} (Simple Storage Service) is an online file storage web service offered by Amazon Web Services. Amazon S3 provides storage through web services interfaces (REST, SOAP, and BitTorrent). It provides developers and IT teams with secure, durable, highly-scalable object storage, for a wide variety of use cases including cloud applications, content distribution, backup and archiving, disaster recovery, and big data analytics. Amazon S3 stores arbitrary objects up to 5 terabytes in size, each accompanied by up to 2 kilobytes of metadata. Objects are organised into buckets (each owned by an AWS account), and identified within each bucket by a unique, user-assigned key.
 
 \section{Dropbox}
-  Dropbox offers cloud storage, file synchronization, personal cloud, and client software. Dropbox synchronizes a directory so that it appears to be the same (with the same contents) regardless of which computer is used to view it. Files placed in this folder are also accessible via the Dropbox website. Dropbox is multi-platform, and is working on all major desktop and mobile OS. Originally, both the server and client software were primarily written in Python; since 2013 Dropbox has began migrating its backend infrastructure to Go. Dropbox depends on rsync, ships the librsync binary-delta library (which is written in C) and utilises delta encoding technology. When a file in a user's Dropbox folder is changed, Dropbox only uploads the pieces of the file that are changed when synchronizing, when possible. It currently uses Amazon's S3 storage system to store the files. Dropbox also provides a technology called LAN sync, which allows computers on a local area network to securely download files locally from each other instead of always hitting the central servers, improving syncing speed.
+  Dropbox offers cloud storage, file synchronisation, personal cloud, and client software. Dropbox synchronises a directory so that it appears to be the same (with the same contents) regardless of which computer is used to view it. Files placed in this folder are also accessible via the Dropbox website. Dropbox is multi-platform, and is working on all major desktop and mobile OS. Originally, both the server and client software were primarily written in Python; since 2013 Dropbox has began migrating its backend infrastructure to Go. Dropbox depends on rsync, ships the librsync binary-delta library (which is written in C) and utilises delta encoding technology. When a file in a user's Dropbox folder is changed, Dropbox only uploads the pieces of the file that are changed when synchronising, when possible. It currently uses Amazon's S3 storage system to store the files. Dropbox also provides a technology called LAN sync, which allows computers on a local area network to securely download files locally from each other instead of always hitting the central servers, improving syncing speed.
 
 \section{Google Drive}
-  Google Drive is a file storage and synchronization service created by Google. The Google Drive client communicates with Google Drive to cause updates on one side to be propagated to the other so they both normally contain the same data. Google Drive is also multi-platform, though there is no official Linux client software. The implementation and syncing algorithm underlying Google Drive are mostly unkown, due to the software being closed source.
+  Google Drive is a file storage and synchronisation service created by Google. The Google Drive client communicates with Google Drive to cause updates on one side to be propagated to the other so they both normally contain the same data. Google Drive is also multi-platform, though there is no official Linux client software. The implementation and syncing algorithm underlying Google Drive are mostly unknown, due to the software being closed source.
 
 \section{ownCloud}
-  ownCloud\cite{owncloud} is a suite of client-server software for creating file hosting services and using them. ownCloud allows synchronisation of directories, similar to the way Dropbox operates. It is a free and open-source software and is multi-platform, with clients available for all major desktop and mobile OS. The server software is written in PHP and JavaScript languages. ownCloud's desktop syncing client depends and ships with csync\cite{csync}, which is a lightweight utility to synchronize files between two directories on a system or between multiple systems. The software does not currently support delta-sync (syncing only file changes).
+  ownCloud\cite{owncloud} is a suite of client-server software for creating file hosting services and using them. ownCloud allows synchronisation of directories, similar to the way Dropbox operates. It is a free and open-source software and is multi-platform, with clients available for all major desktop and mobile OS. The server software is written in PHP and JavaScript languages. ownCloud's desktop syncing client depends and ships with csync\cite{csync}, which is a lightweight utility to synchronise files between two directories on a system or between multiple systems. The software does not currently support delta-sync (syncing only file changes).
 
 
 \section{Hash function}
@@ -62,11 +61,11 @@
   \subsection{xxhash}
   xxHash\cite{xxhash} is a non-cryptographic hash function designed around speed. It successfully completes the SMHasher test suite which evaluates collision, dispersion and randomness qualities of hash functions. xxHash's digests can be returned as bytes, integers or hex numbers and can be of 32 or 64 bit size.
 
-\section{Etag}
-  % TODO: Etag
+\section{ETag}
+  The ETag or Entity Tag is a string identifier assigned to a resource, usually a file or block, that describe exactly one specific version of it. Whenever there is a change on the file, the ETag should be changed as well.ETags can be used for optimistic concurrency control\cite{concurrency-control}, which is a method where shared data resources are being used without a transaction acquiring locks on them; before the transaction commits, it verifies that no other transaction has modified the data, otherwise it rolls back the changes. SHA-256 digests are commonly used as ETag identifiers, since the algorithm is secure and collision resistant, in contrast to MD5 digests, where collisions can be computed.
 
 \section{Containers}
-  % TODO: Containers
+  TODO: Containers
 
 \section{Database}
   A database-management system (DBMS) \cite{dbms-sil} is a collection of interrelated data and a set of programs to access those data. The collection of data, is referred to as the \emph{database.}

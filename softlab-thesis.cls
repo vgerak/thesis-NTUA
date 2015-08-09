@@ -265,6 +265,8 @@
 \RequirePackage{fontspec}
 \RequirePackage{xunicode}
 \RequirePackage{xltxtra}
+\RequirePackage{float}
+\RequirePackage[svgnames]{xcolor}
 \defaultfontfeatures{Mapping=tex-text}
 
 % XeLaTeX fonts

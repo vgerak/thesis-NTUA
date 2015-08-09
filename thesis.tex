@@ -1,7 +1,15 @@
 \nonstopmode
 \documentclass[diploma, english]{softlab-thesis}
-\usepackage[xetex,colorlinks, linkcolor=blue, citecolor=darkgreen]{hyperref}
 
+\usepackage[xetex, colorlinks, linkcolor=DodgerBlue, citecolor=DarkGreen, urlcolor=DodgerBlue]{hyperref}
+\usepackage[hypcap]{caption} % correctly hyperlink captions
+
+% Decision Trees
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\tikzstyle{block} = [rectangle, draw, text width=5em, text centered, rounded corners, minimum height=2em, font=\bf]
+\tikzstyle{state} = [text width=9em, text centered]
+\tikzstyle{blstate} = [rectangle, draw, text width=9em, text centered, minimum height=2em]
 \begin{document}
 
 %%%  Title page
@@ -48,7 +56,7 @@
 
 %%%  Bibliography
 % \bibliographystyle{softlab-thesis}
-\bibliographystyle{abbrv}
+\bibliographystyle{ieeetr}
 \bibliography{thesis}
 
 %%%  Appendices

@@ -3,24 +3,173 @@
 \chapter{Design \& Implementation}
 
 % Θα πρότεινα αυτό το κεφάλαιο να είναι Design and Implementation για τη
-% βασική προσέγγιση. Πρώτα ο αλγόριθμος, μετά ο σκελετός σε Python. Πρώτα
-% ο αλγόριθμος που θα μπορεί να αναφερθεί σε πράγματα που ήδη έχεις
-% καλύψει από το κεφ. 2 [π.χ. τι είναι ETag; πώς χρησιμοποιώ ένα API στο
-% οποίο κάθε αρχείο έχει το δικό του URL κλπ], και μετά προχωράς στην
+% βασική προσέγγιση. Πρώτα ο αλγόριθμος που θα μπορεί να αναφερθεί σε πράγματα
+% που ήδη έχεις καλύψει από το κεφ. 2 [π.χ. τι είναι ETag; πώς χρησιμοποιώ ένα API
+% στο οποίο κάθε αρχείο έχει το δικό του URL κλπ], και μετά προχωράς στην
 % περιγραφή του βασικού Pythonικού σκελετού.
 
 \section{Syncing Algorithm}
-  Mauris id lobortis quam, vitae convallis ipsum. Etiam eget hendrerit purus.
-  Aenean ante orci, porta in turpis at, congue posuere dui.
+  \subsection{Known algorithms}
+    The process of synchronising two filesystem trees (henceforth called ``A'' and ``B'') can be complex to perform correctly, if some needed information is missing. Differences in files can be detected by comparing their hash digests, which is often used as an ETag. While this is the most secure and reliable way to detect changes, computing the hash digest of a file, especially when using a cryptographically secure function) is a computationally expensive procedure that takes significant time for large files. The last modification time is a fast and cheap way to detect file changes, but since it is a property that can be manipulated by software, improper or malicious manipulation can result in failure to detect changes.\\
+
+     First of all, history data for those two trees are very important, as illustrated in the following example. There are generally three cases when synchronising two trees:
+    \begin{enumerate}
+      \item File exists on both and is identical
+      \item File exists on both and is different
+      \item File exists on A but not on B (or vice-versa)
+    \end{enumerate}
+    Case 1 is easily handled, since there is no action to be taken. Without history information, the other two cases would require user input in order to be handled correctly. In case 2, the files should be merged, but cannot be done automatically - and asking regular users how to merge files is undesirable. In case 3, the file might be a newly created, or a recently deleted one and should be copied to tree B or deleted from A, respectively. While the safe choice is to assume the file is new and copy it to tree B, it is often \textbf{not} the right thing to do. It is therefore clear that without file history data the syncing algorithm makes wrong assumtions and fails to handle correctly the most common cases.\\
+
+    With file history present in the form of metadata, a more proper synchronisation is achievable. By checking what changes occured and when between the times $T_1$ and $T_2$, it is possible to determine the action that should be taken, based on table \ref{table:simple-sync-actions}:\\
+
+    \begin{table}[H]
+      \centering
+      \begin{tabular}{|l|l|l|}
+        \hline \textbf{File A} & \textbf{File B} & \textbf{Action} \\ \hline \hline
+         No Change & No Change & No Action \\ \hline
+         Created (ETag = J) & Created (Etag = J) & No Action \\ \hline
+         Created (ETag = J) & Created (Etag = K) & \emph{Merge$^*$} \\ \hline
+         Deleted & Deleted & No Action \\ \hline
+         Deleted & No Change & Delete B \\ \hline
+         Modified & No Change & Update B \\ \hline
+         Modified (ETag = J) & Modified (ETag = K) & \emph{Merge$^*$} \\ \hline
+      \end{tabular}
+      \caption{Syncing actions based on file states}
+      \label{table:simple-sync-actions}
+  \end{table}
+
+    [*] In this table, \emph{Merge} refers to a situation where files A and B become identical. One way this can be achieved is by generating diffs and patching the files, requiring user input if a conflict arises - this is the way most Version Control Systems (VCS), like git and Mercurial, work. A different way, that requires no immediate user interaction is to accept one file version (e.g. File A) and propagating its changes to all other trees, while also renaming the conflicting files, so the conflicts can be manually merged later.
+
+    For any given time, detecting what happened between the times $T_1$ and $T_2$, is straightforward, and described in \ref{table:time-change-detection}:\\
+
+    \begin{table}[H]
+      \centering
+      \begin{tabular}{|l|l|l|}
+        \hline \textbf{Time $T_1$} & \textbf{Time $T_2$} & \textbf{Change}\\ \hline \hline
+         Does not Exist & Exists & Created \\ \hline
+         Exists & Does not Exist & Deleted \\ \hline
+         Exists (ETag = J) & Exists (Etag = J) & No Change \\ \hline
+         Exists (Etag = J) & Exists (Etag = K) & Modified \\ \hline
+      \end{tabular}
+    \caption{File change detection between two points in time}
+    \label{table:time-change-detection}
+    \end{table}
+
+    While this algorithm is significantly better than the previous one, it still has limitations, the most important of which is the failure to detect renames. This can become possible by comparing file digests, but doing so for all files in a directory or for very large files is computationally expensive and slows down the sync process. An even harder problem is the detection of a file that has been renamed and modified, hence having a different hash digest than the original one, a case most syncing algorithms fail to handle efficiently.\\
+
+  \subsection{Proposed Algorithm}
+    At this point we propose a new sychronisation algorithm, one which is efficient, fast and reliable. We assume a service that uses a central metadata server, which maintains information about each version of an uploaded object. We also assume the usage of a local state database, henceforth called \textbf{StateDB}, which locally stores the metadata of all files in the local directory, as they were during the last synchronisation with the server. More specifically, a path hash is used as a file identifier, and other important metadata saved are the file name (``path''), the inode, last modification time (``modtime''), and the file's hash digest(``Etag''). Now the problem of reconcilation between the local directory replicas (``Local'') and the remote server replicas (``Remote'') can be now handled in three steps.
+
+    \subsubsection{Step 1: Detect updates from Local Directory}
+    For each file in the local directory, the necessary action can be derived from the decision tree in Figure \ref{fig:step1}.
+
+    \begin{figure}[H]
+      \centering
+      \begin{tikzpicture}[thick]
+      \newdimen\nodeDist
+      \nodeDist=30mm
+
+        \node [node, state] (A) {phash exists in StateDB?};
+        \path (A) ++(-155:1.6*\nodeDist) node [node,state] (B) {Local modtime == StateDB modtime?};
+        \path (A) ++(-25:1.6*\nodeDist) node [node,state] (C) {inode exists in StateDB?};
+
+        \path (B) ++(-125:\nodeDist) node [node, block] (B-1) {No local change};
+        \path (B) ++(-55:\nodeDist) node [node,state] (B-2) {File exists on Remote?};
+        \path (B-2) ++(-125:\nodeDist) node [node,state] (B-2-1) {StateDB ETag == Remote Etag?};
+        \path (B-2) ++(-55:\nodeDist) node [node,block] (B-2-2) {Local modified};
+        \path (B-2-1) ++(-125:\nodeDist) node [node,block] (B-2-1-1) {Local modified};
+        \path (B-2-1) ++(-55:\nodeDist) node [node,block] (B-2-1-2) {Conflict};
+
+        \path (C) ++(-125:\nodeDist) node [node, block] (C-1) {Renamed};
+        \path (C) ++(-55:\nodeDist) node [node,state] (C-2) {File exists on remote?};
+        \path (C-2) ++(-125:\nodeDist) node [node, block] (C-2-1) {Conflict};
+        \path (C-2) ++(-55:\nodeDist) node [node,block] (C-2-2) {New local file};
+
+
+        \draw (A) -- (B) node [left,pos=0.4] {yes};
+        \draw (A) -- (C) node [right,pos=0.4] {no};
+        \draw (B) -- (B-1) node [left,pos=0.5] {yes};
+        \draw (B) -- (B-2) node [right,pos=0.5] {no};
+        \draw (B-2) -- (B-2-1) node [left,pos=0.5] {yes};
+        \draw (B-2) -- (B-2-2) node [right,pos=0.5] {no};
+        \draw (B-2-1) -- (B-2-1-1) node [left,pos=0.5] {yes};
+        \draw (B-2-1) -- (B-2-1-2) node [right,pos=0.5] {no};
+        \draw (C) -- (C-1) node [left,pos=0.5] {yes};
+        \draw (C) -- (C-2) node [right,pos=0.5] {no};
+        \draw (C-2) -- (C-2-1) node [left,pos=0.5] {yes};
+        \draw (C-2) -- (C-2-2) node [right,pos=0.5] {no};
+      \end{tikzpicture}
+      \caption{Decision tree for local directory files}
+      \label{fig:step1}
+    \end{figure}
+
+    \subsubsection{Step 2: Detect updates from StateDB}
+    For each entries in the StateDB, the necessary action can be derived from the decision tree in Figure \ref{fig:step2}.
+
+    \begin{figure}[H]
+      \centering
+      \begin{tikzpicture}[scale=0.92, every node/.style={transform shape}]
+      \newdimen\nodeDist
+      \nodeDist=30mm
+
+        \node [node, state] (S) {File exists on local/remote?};
+        \path (S) ++(-160:2.4\nodeDist) node [node,blstate] (A) {Local exists, Remote exists};
+        \path (A) ++(:1.5\nodeDist) node [node,blstate] (C) {Local doesn't exist, Remote exists};
+        \path (C) ++(:1.5\nodeDist) node [node,blstate] (B) {Local doesn't exist, Remote doesn't exist};
+        \path (B) ++(:1.5\nodeDist) node [node,blstate] (D) {Local exists, \hspace{1em} Remote doesn't exist};
+        \path (A) ++(-90:0.7\nodeDist) node [node,block] (AA) {No change};
+        \path (B) ++(-90:0.7\nodeDist) node [node,block] (BB) {Deleted};
+        \path (C) ++(-90:0.7\nodeDist) node [node,state] (CC) {inode exists in StateDB?};
+        \path (CC) ++(-120:\nodeDist) node [node, block] (CC-1) {Renamed / Deleted};
+        \path (CC) ++(-60:\nodeDist) node [node,state] (CC-2) {Remote ETag == StateDB Etag?};
+        \path (CC-2) ++(-120:\nodeDist) node [node, block] (CC-2-1) {Deleted};
+        \path (CC-2) ++(-60:\nodeDist) node [node,block] (CC-2-2) {Remote modified};
+        \path (D) ++(-90:0.7\nodeDist) node [node,state] (DD) {Local modtime == StateDB modtime?};
+        \path (DD) ++(-120:\nodeDist) node [node, block] (DD-1) {Deleted};
+        \path (DD) ++(-60:\nodeDist) node [node,block] (DD-2) {Local modified};
+
+
+        \draw (S) -- (A);
+        \draw (S) -- (B);
+        \draw (S) -- (C);
+        \draw (S) -- (D);
+        \draw (A) -- (AA);
+        \draw (B) -- (BB);
+        \draw (C) -- (CC);
+        \draw (D) -- (DD);
+        \draw (CC) -- (CC-1) node [left,pos=0.5] {yes};
+        \draw (CC) -- (CC-2) node [right,pos=0.5] {no};
+        \draw (CC-2) -- (CC-2-1) node [left,pos=0.5] {yes};
+        \draw (CC-2) -- (CC-2-2) node [right,pos=0.5] {no};
+        \draw (DD) -- (DD-1) node [left,pos=0.5] {yes};
+        \draw (DD) -- (DD-2) node [right,pos=0.5] {no};
+      \end{tikzpicture}
+      \caption{Decision tree for StateDB entries}
+      \label{fig:step2}
+    \end{figure}
+
+    \subsubsection{Step 3: Detect updates from Remote Server}
+    TODO: Step3
+
+
+    \subsubsection{Important notes on the syncing algorithm}
+    \begin{itemize}
+      \item For update detection between Local and StateDB, we use modtime, since it is faster. For update detection between StateDB and Remote, we use the ETag, since it is the most reliable way and is readily available without hashing the file - it is stored in both cases and available with only a lookup.
+      \item When the file is updated on Local but deleted on Remote, we decide to upload the modified file again, since it is the safe option.
+      \item If conflict is detected, that means that the both the Local file and the Remote one have been updated since the last sync was completed. In that case we propose to rename the local one to ``<filename>-conflicting\_copy.<extension>'' and download the remote one. Filenames ending in ``-conflicting\_copy'' are excluded from Step 1 of the syncing algorithm.
+      \item TODO: No Change - StateDB
+      \item TODO: renamed/deleted
+    \end{itemize}
+
 
 \section{Basic Classes}
   \subsection{FileStat}
-    Nulla lectus justo, vulputate non euismod quis, sagittis sit amet sem.
+    TODO: FileStat
     \subsubsection{Path hash algorithm selection}
-      Donec euismod ante non felis condimentum efficitur. Nunc vel pretium diam.
+      TODO: Phash - xxhash64
   \subsection{StateDB}
-    Nulla lectus justo, vulputate non euismod quis, sagittis sit amet sem.
+    TODO: StateDB
   \subsection{LocalDirectory}
-    Donec euismod ante non felis condimentum efficitur. Nunc vel pretium diam.
+    TODO: LocalDir
   \subsection{CloudClient}
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    TODO: CloudClient
