@@ -1,7 +1,7 @@
 % !TEX root = ../thesis.tex
 
 \chapter{Design \& Implementation}
-
+\label{cha:design_implementation}
 % Θα πρότεινα αυτό το κεφάλαιο να είναι Design and Implementation για τη
 % βασική προσέγγιση. Πρώτα ο αλγόριθμος που θα μπορεί να αναφερθεί σε πράγματα
 % που ήδη έχεις καλύψει από το κεφ. 2 [π.χ. τι είναι ETag; πώς χρησιμοποιώ ένα API
@@ -276,7 +276,7 @@
       \end{itemize}
     \subsubsection{PithosClient}
       \begin{itemize}
-        \item \textbf{pithos}: An authenticated client who calls the Pithos API functions of the service, when needed.\\
+        \item \textbf{pithos}: An authenticated client which calls the Pithos API functions of the service, when needed.\\
         \item \textbf{init}: Uses \emph{auth\_URL} and \emph{auth\_token} to authenticate a pithos client with Astakos (the Identity Management Service), then prepares it for use.
         \item \textbf{\_modtime\_from\_remote}: Static method that returns the modtime in POSIX format (UNIX epoch timestamp), given the remote file metadata response \emph{remote\_obj}. Used for disambiguation, since the json responses of pithos service follow two different formats.
         \item \textbf{\_is\_directory\_from\_remote}: Static method that returns \emph{True} if the object is a folder, given the remote object metadata response \emph{remote\_obj}. Used for disambiguation.
