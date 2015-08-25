@@ -1325,7 +1325,8 @@
 \def\prefacename{Preface}
 \def\keywordsname{Keywords}
 \def\committeename{Counselling committee}
-\def\supervisorname{Supervisor}
+%\def\supervisorname{Supervisor}
+\def\supervisorname{Επιβλέπων}
 \def\committeemembersname{Members}
 \def\pagesname{Pages}
 \def\urlname{URL}
