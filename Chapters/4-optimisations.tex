@@ -317,6 +317,8 @@ In this chapter, we improve on the initial design of the framework described in 
 
   \[\textrm{Performance gain \%} = \left(1 - \frac{\textrm{\# of new blocks}}{\textrm{Total \# of blocks}} \right) \times 100\]
 
+  % TODO: Limitation: aligned blocks
+
 \section{Local deduplication - FUSE}
   As mentioned on section \ref{sec:local_block}, we can implement local block storage, to improve download speeds for large similar files. Even using this method, storing many VM snapshots or images requires large amounts of disk space, since the files are being constructed from their blocks, taking space in the file system. Since those files consist of a significant amount of same blocks, very efficient data compression can be achieved by using deduplication techniques on the local file system.
 
