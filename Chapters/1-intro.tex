@@ -1,43 +1,76 @@
 % !TEX root = ../thesis.tex
 
+% \setcounter{chapter}{-1}
 \chapter{Εισαγωγή}
-% http://www.cslab.ece.ntua.gr/~vkoukis/files/vkoukis-phd.pdf
+Σε αυτή τη διπλωματική εργασία, παρουσιάζεται ένα cross-platform framework που σχεδιάστηκε ώστε να λειτουργεί με διαφορετικές υπηρεσίες αποθηκευτικού νέφους. Συζητάμε τις αλγοριθμικές και σχεδιαστικές επιλογές που λάβαμε κατά την ανάπτυξη του framework και εστιάζουμε στο σενάριο του συγχρονισμού μεγάλων ομοιόμορφων αρχείων, όπως είναι τα στιγμιότυπα και τα αρχεία εικόνας \emph{εικονικών μηχανών} (Virtual Machines - VM).
 
 \section{Κίνητρο}
-  {\color{red}\textbf{Κίνητρο}}
+  Ο συγχρονισμός αρχείων είναι μία διαδικασία που εξασφαλίζει πως τα αρχεία σε δύο ή περισσότερες τοποθεσίες ενημερώνονται για αλλαγές, ακολουθώντας κάποιους κανόνες. Η διαδικασία αυτή χρησιμοποιείται ολοένα και συχνότερα, κυρίως για την αντιγραφή αρχείων μεταξύ διαφορετικών υπολογιστών ή για τη δημιουργεία αντιγράφων ασφαλείας (backups). Το πρόβλημα του αξιόπιστου (χωρίς σφάλματα), αποδοτικού και cross-platform (λειτουργεί σε διαφορετικά λειτουργικά συστήματα) συγχρονισμού αρχείων ενέπνευσε τη δημιουργία μεγάλου εύρους εφαρμογών που ικανοποιούν την ανάγκη αυτή, όπως είναι το Dropbox και το ownCloud. Το εύρος αυτό των εφαρμογών εκτείνεται από εφαρμογές συγχρονισμού γενικού σκοπού, εώς και εφαρμογές που εστιάζουν σε πολύ συγκεκριμένο μορφότυπο αρχείων ή σενάρια χρήσης. Ωστόσο, από όσο γνωρίζουμε, δεν υπάρχει εφαρμογή ή βιβλιοθήκη που να ειδικεύεται στο συγχρονισμό μεγάλων ομοιόμορφων αρχείων, όπως τα στιγμιότυπα και τα αρχεία εικόνας VM.
+
+  Τα τελευταία χρόνια, η χρήση των εικονικών μηχανών έχει επεκταθεί σημαντικά. Το γεγονός αυτό οφείλεται εν μέρει στη διάδοση υπηρεσιών υπολογιστικού νέφους, όπως το AWS της Amazon και το \textasciitilde okeanos του GRNet. Το πιο βασικό μοντέλο παροχής υπηρεσιών νέφους, το Υποδομή-ως-Υπηρεσία (Infrastructure-as-a-Service, IaaS) παρέχει στους χρήστες εικονικές μηχανές και υπολογιστικούς πόρους, στους οποίους μπορούν αυτοί να εκτελέσουν τους υπολογισμούς τους ή να αναπτύξουν τις δικές τους εφαρμογές και υπηρεσίες. Ο ολοένα αυξανόμενος αριθμός εικονικών μηχανών που χρησιμοποιούνται, όπως επίσης και η πληθώρα των στιγμιοτύπων που διατηρούνται (αποθήκευση της κατάσταση μιας εικονικής μηχανής μία δεδομένη χρονική στιγμή) καθιστούν αναγκαία την εξεύρεση ενός αξιόπιστου και αποδοτικού τρόπου συγχρονισμού.
+
+  Ο συγχρονισμός αρχείων αποτελείται από πολλές περισσότερες συνιστώσες από απλή μεταφορά αρχείων από και προς ένα απομακρυσμένο εξυπηρετητή. Η ύπαρξη πολλών πελατών-τερματικών σημαίνει πως η διαδικασία θα πρέπει να καταφέρει να συγχρονίσει όλους μεταξύ τους, ανιχνεύοντας και μεταφέροντας τις αλλαγές σε όλους. Το γεγονός πως πολλοί πελάτες μπορεί να επιχειρούν αλλαγές στο ίδιο αρχείο δημιουργεί καταστάσεις κούρσας (race conditions), και η εφαρμογή θα πρέπει να μπορεί να τις ανιχνεύει και να τις επιλύει αξιόπιστα, χωρίς να προκαλείται διαφθορά των δεδομένων ή απώλεια των αλλαγών. Οι κατάλογοι φακέλων προς συγχρονισμό μπορεί να εμπεριέχουν μεγάλο αριθμό αρχείων, οπότε είναι απαραίτητη η υλοποίηση ενός μηχανισμού ταχύ εντοπισμού αλλαγών σε κάποιο αρχείο. Επιπροσθέτως, κατα τη διαδικασία συγχρονισμού αρχείων είναι ιδιαίτερα σημαντικό να γίνεται αποδοτικά η μετακίνηση δεδομένων στο δίκτυο, κατά προτίμηση μεταφέροντας μόνο τα κομμάτια των αρχείων που εμπεριέχουν τις αλλαγές. Η σημασία αυτού γίνεται περισσότερο εμφανής αν αναλογιστούμε το σενάριο χρήσης που περιγράφηκε προηγουμένως· μία αλλαγή λίγων bytes να προκαλέσει μεταφορά μερικών GB αποτελεί μη αποδεκτή συμπεριφορά από άποψη απόδοσης.
+
+  Μερικές από τις διαθέσιμες εφαρμογές υλοποιούν κάποια από τα παραπάνω χαρακτηριστικά και επιπλέον εισάγουν βελτιστοποιήσεις δικού τους σχεδιασμού. Δεν υπάρχει εώς τώρα γνωστή εφαρμογή ανοιχτού κώδικα που να επιτρέπει το συγχρονισμό με χρήση διαφορετικών υπηρεσιών αποθηκευτικού νέφους. To framework που σχεδιάστηκε μπορεί να λειτουργήσει με τη διεπαφή προγραμματισμού εφαρμογών (Application Programming Interface, API) οποιασδήποτε υπηρεσίας αποθηκευτικού νέφους, αρκεί να υλοποιηθούν οι μέθοδοι που περιγράφονται στην παράγραφο \ref{ssec:cloudclient}. Προτείνουμε επίσης τη χρήση τοπικής αποεπικάλυψης δεδομένων (data deduplication) με χρήση ενός μηχανισμού Συστήματος Αρχείων σε Χώρο Χρήστη (Filesystem in Userspace, FUSE). Η τεχνική αυτή επιτρέπει την πολύ αποδοτική αποθήκευση μεγάλων ομοιόμορφων αρχείων, μειώνοντας σημαντικά την ανάγκη αποθηκευτικού χώρου, αφού αποθηκεύονται μόνο τα διαφορετικά block που απαρτίζουν τα αρχεία. Η βελτιστοποίηση αυτή, δεν απαντάται σε κανένα από τα διαθέσιμα λογισμικά συγχρονισμού αρχείων.
 
 \section{Συνεισφορά της εργασίας}
-  {\color{red}\textbf{Κύρια σημεία της εργασίας}}
+  Οι κύριες συνεισφορές της εργασίας είναι οι παρακάτω:
+    \begin{enumerate}
+    \item Σχεδιασμός και υλοποίηση ενός cross-platform framework που μπορεί να λειτουργεί μια διαφορετικές υπηρεσίες αποθηκευτικού νέφους.
+    \item Σχεδιασμός και υλοποίηση ενός προγράμματος-πελάτη για το συγχρονισμό αρχείων με χρήση του API της υπηρεσίας αποθηκευτικού νέφους Pithos του \textasciitilde okeanos IaaS καθώς και μίας δοκιμαστικής εφαρμογής που θα πραγματοποιεί το συγχρονισμό.
+    \item Σχεδιασμός και υλοποίηση βελτιστοποιήσεων πάνω στη διαδικασία συγχρονισμού και εκτέλεση μετρήσεων επίδοσης (benchmarks) για να φανεί η συνεισφορά των βελτιστοποιήσεων.
+    \item Σύγκριση με υπάρχοντα λογισμικά συγχρονισμού αρχείων και παρουσίαση ομοιοτήτων και διαφορών στις σχεδιαστικές επιλογές και στα χαρακτηριστικά.
+  \end{enumerate}
 
 \section{Οργάνωση κειμένου}
-  {\color{red}\textbf{Οργάνωση κειμένου}}
+  Στο κεφάλαιο \ref{cha:background}, παρουσιάζουμε το θεωρητικό υπόβαθρο που θεωρείται απαραίτητο για τον αναγνώστη, προκειμένου να κατανοήσει έννοιες και ορισμούς που παρουσιάζονται έπειτα στη διπλωματική εργασία. Πιο συγκεκριμένα, περιγράφουμε την έννοια του συγχρονισμού δεδομένων, διάφορες διαδικτυακές υπηρεσίες και λογισμικά που αντιμετωπίζουν το πρόβλημα αυτό, καθώς και συγκεκριμένες καίριες λεπτομέρειες των υλοποιήσεων
 
-\section{Συνοπτική παρουσίαση του framework}
-  {\color{red}\textbf{Σύνοψη framework}}
+  Στο κεφάλαιο \ref{cha:design_implementation}, αναφέρουμε τους γνωστούς αλγορίθμους συγχρονισμού αρχείων, προτείνουμε το δικό μας αλγόριθμο και εξηγούμε τους λόγους που οδήγησαν σε συγκεκριμένες σχεδιαστικές επιλογές. Στο δεύτερο μισό του κεφαλαίου παρουσιάζουμε τα κύρια σημεία και τις κλάσεις του framework, και επεξηγούμε τις συναρτήσεις που εκθέτει το API του.
 
-\section{Συνοπτική παρουσίαση των πειραματικών αποτελεσμάτων}
-  {\color{red}\textbf{Σύνοψη αποτελεσμάτων}}
+  Στο κεφάλαιο \ref{cha:optimisations}, περιγράφουμε τις βελτιστοποιήσεις που σχεδιάστηκαν και υλοποιήθηκαν στο framework αυτό, εξηγώντας τις σχεδιαστικές επιλογές της κάθε μίας. Στο κεφάλαιο αυτό εμπεριέχονται και τα αποτελέσματα των μετρήσεων επίδοσης, τα οποία συνοδεύονται και από τις αντίστοιχες γραφικές παραστάσεις και σχολιασμό των αποτελεσμάτων.
+
+  Στο κεφάλαιο \ref{cha:comparisons}, συγκρίνουμε το framework μας με τις δημοφιλέστερες εφαρμογές συγχρονισμού αρχείων της αγοράς. Συγκρίνουμε μεταξύ τους με βάση τα διαθέσιμα χαρακτηριστικά που προσφέρονται και αναφερόμαστε στην καταλληλότητα και στα πιθανά προβλήματα που μπορούν να προκύψουν στο σενάριο χρήσης των μεγάλων ομοιόμορφων αρχείων.
+
+  Στο κεφάλαιο \ref{cha:future-work}, αναφερόμαστε στις προγραμματισμένες μελλοντικές βελτιστοποιήσεις του framework και προτείνουμε την προσθήκη επιπλέον χαρακτηριστικών που θα προσφέρουν καλύτερη απόδοση στη διαδικασία συγχρονισμού.
+
+% \section{Συνοπτική παρουσίαση του framework}
+%   {\color{red}\textbf{Σύνοψη framework}}
+
+% \section{Συνοπτική παρουσίαση των πειραματικών αποτελεσμάτων}
+%   {\color{red}\textbf{Σύνοψη αποτελεσμάτων}}
 
 \setcounter{chapter}{0}
-
 \chapter{Introduction}
 
-\begin{itemize}
-\item What is the problem?
-\item Why is it interesting and important?
-\item Why is it hard? (E.g., why do naive approaches fail?)
-\item Why hasn't it been solved before? (Or, what's wrong with previous proposed solutions? How does mine differ?)
-\item What are the key components of my approach and results? Also include any specific limitations.
-\end{itemize}
+This dissertation presents a cross-platform file synchronisation framework that works with multiple cloud storage services. We discuss the algorithm and design choices behind the framework and focus on the synchronisation of large, similar files, such as Virtual Machine (VM) images and snapshots.
 
 \section{Motivation}
-  {\color{red}\textbf{TODO: Motivation}}
+  File synchronisation is a process that ensures that files in two or more different locations remain updated, following certain rules. This process is becoming increasingly common and can be used to copy files between different computers or for backup purposes. The problem of reliable (less error-prone), efficient and cross-platform file synchronisation is important and has led to the development of a large variety of software to cover that need, such as Dropbox and ownCloud. This software variety ranges from general-purpose synchronisation software to software focusing on very specific use cases. Despite this fact, to the best of my knowledge, there is no software or library specialising in the synchronisation of large, similar files, such as VM images and snapshots.
+
+  The last few years, the use of VMs has significantly increased, assisted by the spread of cloud computing services such as AWS from Amazon or \textasciitilde okeanos from GRNet. The most basic cloud-service model, Infrastructure-as-a-Service (IaaS) provides users with VMs and resources to use for their computations or to deploy their own services. With the ever-growing number of VM images used, as well as the various VM snapshots taken (that store the state of a VM at a specific point in time), the need for efficient and reliable synchronisation becomes apparent.
+
+  File syncing consists of much more than simply transfering files to and from a remote server. Since there are possibly many clients, the process tries to \emph{reconcile} directories in multiple different computers, detecting and propagating changes to everyone. Multiple clients accessing the same resource lead to race conditions, and the software should be able to detect them and reliably resolve those cases, without corrupting data or losing changes. The directories to be synchronised can potentially contain a large number of files, so there a mechanism to quickly identify those changes needs to be implemented. Furthermore, care should be taken to optimimise the amount of data moved over the network, transferring only the necessary parts of files to apply the changes. This is especially important for the use case described; a modification of a few bytes causing a transfer of several GB of data is a behaviour that has unacceptable performance.
+
+  Some of the available software implement a number of the aforementioned features, introducing other optimisations of their own design. So far though, there is no known application that is free/open source and able to manage the synchronisation with different object storage services. Our framework's API enables extensibility to work with any cloud storage API, as long as the few methods described in section \ref{ssec:cloudclient} are implemented. Furthermore, we propose a local deduplication feature that allows for very efficient storage of large similar files, using a FUSE mechanism. This feature reduces the size required for storage to the size of different blocks found in all the files, greatly reducing storage space in the use case of VM snapshots and images, and is not present in any of the currently available software.
+
+  % What are the key components of my approach and results? Also include any specific limitations.
 
 \section{Thesis contribution}
-  {\color{red}\textbf{TODO: Thesis contribution}}
+  The main contributions of this work are the following:
+  \begin{enumerate}
+    \item Design and implementation of an cross-platform synchronisation framework that is able to operate with different cloud storage services.
+    \item Design and implementation of a syncing client for the Pithos object storage service of the \textasciitilde okeanos IaaS and a demo application to perform the synchronisation.
+    \item Design and implementation of various optimisations on the synchronisation process and execution of benchmarks to showcase their performance gains.
+    \item Comparison with existing synchronisation software, hilighting design and feature similarities and differences.
+  \end{enumerate}
 
 \section{Chapter outline}
-  {\color{red}\textbf{TODO: Chapter outline}}
+  In chapter \ref{cha:background}, we present the theoretical background which is considered important for a reader to know, in order to comprehend the concepts and terminologies introduced later in the dissertation. More specifially, we present the concept of data synchronisation, various web services and software that are aimed at this problem as well as some implementation intrinsic details.
 
-\section{Brief description of the framework}
-  {\color{red}\textbf{TODO: Brief framework description}}
+  In chapter \ref{cha:design_implementation}, we discuss the known synchronisation algorithms, propose our own and describe the reasoning behind our design decisions. In the second part of the chapter, the core classes of the implementation are presented, with explanation on the API functions exposed by the framework.
+
+  In chapter \ref{cha:optimisations}, we describe the optimisations designed and implemented in this framework, explaining the design choices for each one. We also include the results of benchmark runs, and accompany them with graphical representations and comments.
+
+  In chapter \ref{cha:comparisons}, we compare our synchronisation framework with existing popular synchronisation software. We compare and contrast the features offered between them and discuss the suitability and expected problems for the use case of large similar files.
+
+  In chapter \ref{cha:future-work}, we list planned improvements to the framework and propose additional features that will offer performance gains to the synchronisation process.

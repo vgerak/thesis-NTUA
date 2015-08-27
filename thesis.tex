@@ -1,7 +1,7 @@
 \nonstopmode
 \documentclass[diploma, english]{softlab-thesis}
 
-\usepackage[xetex, colorlinks, linkcolor=DodgerBlue, citecolor=DarkGreen, urlcolor=DodgerBlue]{hyperref}
+\usepackage[xetex, colorlinks, linkcolor=DodgerBlue, citecolor=DarkGreen, urlcolor=DodgerBlue, hypertexnames=false]{hyperref}
 \usepackage[hypcap]{caption} % correctly hyperlink captions
 \usepackage{subcaption}
 \usepackage{multirow}
@@ -23,8 +23,8 @@
 
 \title{Σχεδιασμός και Υλοποίηση ενός Φορητού Μηχανισμού Συγχρονισμού Αρχείων σε Περιβάλλον Αποθηκευτικού Νέφους}
 \author{Βασίλειος Γερακάρης}
-\date{Ιούλιος 2015}
-\datedefense{28}{8}{2015}
+\date{Αύγουστος 2015}
+\datedefense{31}{8}{2015}
 
 \supervisor{Νεκτάριος Κοζύρης}
 \supervisorpos{Καθηγητής Ε.Μ.Π.}
@@ -36,7 +36,7 @@
 \committeethree{Γεώργιος Γκούμας}
 \committeethreepos{Λέκτορας Ε.Μ.Π.}
 
-\TRnumber{{\color{red}\textbf{TODO: ask nkoziris}}} %TODO: number-year, ask nkoziris
+\TRnumber{{\color{red}\textbf{??????}}} %TODO: number-year, ask nkoziris
 \department{Τομέας Τεχνολογίας Πληροφορικής και Υπολογιστών}
 
 \maketitle
@@ -52,7 +52,6 @@
 %%%  Main part of the book
 \mainmatter
 
-\nocite{*}
 \include{Chapters/1-intro}
 \include{Chapters/2-background}
 \include{Chapters/3-design_implementation}
@@ -60,9 +59,12 @@
 \include{Chapters/5-comparisons}
 \include{Chapters/6-future-work}
 
+
 %%%  Bibliography
 % \bibliographystyle{softlab-thesis}
-\bibliographystyle{ieeetr}
+% \bibliographystyle{ieeetr}
+\nocite{*}
+\bibliographystyle{unsrt}
 \bibliography{thesis}
 
 %%%  Appendices

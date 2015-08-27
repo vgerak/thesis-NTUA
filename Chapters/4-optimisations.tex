@@ -1,6 +1,7 @@
 % !TEX root = ../thesis.tex
 
 \chapter{Syncer Optimisations}
+\label{cha:optimisations}
 In this chapter, we improve on the initial design of the framework described in chapter \ref{cha:design_implementation}. We run benchmarks on the optimisations proposed, and present the results. The specifications of the two setups used for testing are shown in table \ref{table:benchmark-specs}.
 
 \begin{table}[H]
@@ -320,6 +321,7 @@ In this chapter, we improve on the initial design of the framework described in 
   % TODO: Limitation: aligned blocks
 
 \section{Local deduplication - FUSE}
+  \label{sec:fuse}
   As mentioned on section \ref{sec:local_block}, we can implement local block storage, to improve download speeds for large similar files. Even using this method, storing many VM snapshots or images requires large amounts of disk space, since the files are being constructed from their blocks, taking space in the file system. Since those files consist of a significant amount of same blocks, very efficient data compression can be achieved by using deduplication techniques on the local file system.
 
   The solution proposed is to only store the blocks in the block directory and not reconstruct the files in the syncing directory, but link a file's hash list to the corresponding blocks in the block directory instead. This solution requires modifications to most existing file systems, so either a kernel module or a Filesystem in Userspace (FUSE) mechanism is required, of which we propose the latter. This mechanism should modify the calls to \emph{fstat(), open(), read()} and \emph{write()} system calls, to use the blocks a file is consisted of. The design should follow the ``\emph{Write once, Read many, Update never}'' practice, which suggests never modifying a block in the block directory, but instead use the Copy on Write (CoW) strategy, to create new blocks when changes are required. This ensures that the original resources remain unchanged on the disk, so different files sharing this block will not get corrupted.
