@@ -3,12 +3,13 @@
 \chapter{Future Work}
 \label{cha:future-work}
 \section{Local deduplication - FUSE Implementation}
-% TODO: Local deduplication - FUSE Implementation
-To Do:
-< Implement the local deduplication described in \ref{sec:fuse} >
+As mentioned in section \ref{sec:fuse}, the FUSE mechanism has been designed, but not yet fully implemented. We decided to use the \emph{fusepy} Python module that provides a simple interface to FUSE. Calls to the write() system call are handled according to the following procedure: If the block accessed by the write call does not exist in the block directory, it is created and the write happens directly to it. If it already exists, it is copied according to the CoW strategy and the write() call happens on the copied block. The files are afterwards uploaded, and the ``new'' blocks are hashed and stored in the block directory. The old blocks remain there, since they might be shared by other files.
 
+It is worth mentioning that the directory does not actually exist on the disk. On the application data folder of the framework there is a folder (currently named ``dir\_structure'') that mirrors the structure of the synchronisation directory. For each file \emph{<sync\_dir>/dir1/file1} that should reside in it there is a file \emph{<appdata\_dir)>/dir\_structure/dir1/file1} that contains the metadata needed to reconstruct the file using FUSE. It is a mapping mechanism similar to the page table encountered in operating systems. That way, when asked about the size or contents of a file, the mechanism consults the contents of the corresponding file in the \emph{dir\_structure}, which contain the size and the blocks of the requested file.
 
 \section{Peer-to-peer syncing with direct L2 frame exchange}
-% TODO: Peer-to-peer syncing with direct L2 frame exchange
-To Do:
-< Search local network if blocks exist on a different computer and get them from there instead of the remote server. Similar to dropbox, but on a block level rather than a file one >
+In most cases, LAN transfer speeds are substantially faster than WAN ones. It is possible to improve file synchronisation speed by requesting a resource from a computer in the same LAN rather than download it from the remote server. It is an optimisation already implemented by Dropbox, and we can use a finer granularity and detect and transfer blocks instead of whole files.
+
+This optimisation requires a way to detect other machines in the LAN running an application that uses the framework. A simple way would be to have the clients monitor the Link Layer (L2) Multicast address (FF:FF:FF:FF:FF:FF) for such requests and respond accordingly. Multicast address was chosen instead of broadcast, because the latter is not defined in the IPv6 protocol, if we ever chose to extend the implementation to use the Internet Layer (L3) to request blocks from connected networks.
+
+When a client A wants to download a file from the remote server, after getting the hash list and generates the missing blocks list, it sends a request containing the missing blocks to the multicast address and waits momentarily for responses. Other clients within the network, respond if they have the block available. After a small time, client A requests the blocks he got responses for from the other clients in the LAN and asks for the ones not found in the network from the remote server. It is very important to verify that the blocks downloaded from the LAN clients match the advertised etag, as a malicious client could easily send specifically crafted blocks as a response to such requests.
