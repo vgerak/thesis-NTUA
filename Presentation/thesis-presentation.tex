@@ -42,7 +42,7 @@
 \institute{National Technical University of Athens}
 \title[A Portable File Synchronisation Mechanism for a Cloud Storage Environment]{Design \& Implementation of a Portable File Synchronisation Mechanism for a Cloud Storage Environment}
 \author{Vasilis Gerakaris}
-\date{1/9/2015}
+\date{2/9/2015}
 
 \begin{document}
 \setsansfont[Mapping=TeX-text]{Linux Biolinum O}
@@ -143,8 +143,8 @@
           \hline \textbf{Time $T_1$} & \textbf{Time $T_2$} & \textbf{Change}\\ \hline \hline
            Does not Exist & Exists & Created \\ \hline
            Exists & Does not Exist & Deleted \\ \hline
-           Exists (ETag = J) & Exists (Etag = J) & No Change \\ \hline
-           Exists (Etag = J) & Exists (Etag = K) & Modified \\ \hline
+           Exists (ETag = J) & Exists (ETag = J) & No Change \\ \hline
+           Exists (ETag = J) & Exists (ETag = K) & Modified \\ \hline
         \end{tabular}
         \caption{File change detection between two points in time}
       \end{subtable}
@@ -155,8 +155,8 @@
         \begin{tabular}{|l|l|l|}
           \hline \textbf{File replica A} & \textbf{File replica B} & \textbf{Action} \\ \hline \hline
            No Change & No Change & No Action \\ \hline
-           Created (ETag = J) & Created (Etag = J) & No Action \\ \hline
-           Created (ETag = J) & Created (Etag = K) & \emph{Merge$^*$} \\ \hline
+           Created (ETag = J) & Created (ETag = J) & No Action \\ \hline
+           Created (ETag = J) & Created (ETag = K) & \emph{Merge$^*$} \\ \hline
            Deleted & Deleted & No Action \\ \hline
            Deleted & No Change & Delete B \\ \hline
            Modified & No Change & Update B \\ \hline
@@ -362,7 +362,7 @@
           \end{adv}
         \end{block}
         \begin{disadv}
-          \item Need to wait for completion of all threads at a step of the sync algorithm before proceding to the next.
+          \item Need to wait for completion of all threads at a step of the sync algorithm before proceeding to the next.
           \begin{itemize}
             \item Can be further optimised using a locking mechanism
           \end{itemize}
@@ -416,7 +416,7 @@
         \end{adv}
         We use the \alert{watchdog} Python module to access those utilities, extending the LocalDirectory class to support the feature.
         \begin{itemize}
-          \item Constantly runs in the background (daemon). Offline changes/crashes/reboots are handled by performing a full local directory scan on startup.
+          \item Constantly runs in the background (daemon). Offline changes/crashes/reboots are handled by performing a full local directory scan on start-up.
         \end{itemize}
   		}
   		\only<2>{ \framesubtitle{(ii) - Benchmark results}
@@ -475,7 +475,7 @@
         \end{figure}
   		}
       \only<3>{ \framesubtitle{(iii) - Benchmark results}
-        \highlightbf{Setup}: Create and upload a 40 MiB (41,943,040 B) file (exactly 10 blocks of 4 MiB), modify some blocks, manually reupload to server, measure download times.
+        \highlightbf{Setup}: Create and upload a 40 MiB (41,943,040 B) file (exactly 10 blocks of 4 MiB), modify some blocks, manually re-upload to server, measure download times.
         \begin{table}[!htpb]
           \setlength{\tabcolsep}{12pt}
           \begin{adjustbox}{max width=1.05\textwidth, center}
@@ -577,7 +577,7 @@
     \begin{adv}
       \item Uses librsync - rolling checksum algorithm benefits
       \item Remote deduplication with blocks of 4 MiB - Fast uploads of similar files
-      \item Benchmarks indicated the existance of a local block cache - fast downloads if blocks are cached
+      \item Benchmarks indicated the existence of a local block cache - fast downloads if blocks are cached
       \item Directory Monitoring
       \item Streaming Sync for multiple clients (Prefetching blocks)
     \end{adv}

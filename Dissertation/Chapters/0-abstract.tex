@@ -2,24 +2,32 @@
 \begin{abstractgr}
   -Περίληψη-
 \begin{keywordsgr}
-Αποθηκευτικό Νέφος, Συγχρονισμός αρχείων
+    Αποθηκευτικό Νέφος, Υπηρεσίες Νέφους, Εικονικές Μηχανές, Συγχρονισμός αρχείων, Μεγάλα Ομοιόμορφα Αρχεία, Προγραμματιστικές Διεπαφές Εφαρμογών
 \end{keywordsgr}
 \end{abstractgr}
 
 
 % Abstract, in English
 \begin{abstracten}
-  Abstract
+  The increased use of Virtual Machines in cloud service infrastructures has resulted in a large volume of disk image and snapshot files. As a result, a reliable and efficient way of synchronising those files between different computers is needed. Software applications that achieves file synchronisation already exist, but none is tailored specifically for this task. Understanding the special characteristics of the files in question, the fact that they are large in size and have most of their data in commmon, allows us optimise the synchronisation process for that use case.
+
+  The aim of this dissertation is to present the design of a synchronisation framework for large similar files, using cloud storage services, written in Python. We study existing implementations of file syncing, understand the underlying design choices and make further improvements on them. We propose a synchronisation algorithm that reliably and efficiently detects and handles updates. We also propose the use of abstract classes to represent files, local directories and cloud storage service APIs. The APIs exposed by those classes allow more flexibility to the framework, so it can operate over different OSs and cloud storage services.
+
+  After the presentation of the initial design, we propose and implement several optimisations that further improve the performance of the synchronisation process. <more>
+
 \begin{keywordsen}
-Cloud storage, File synchronisation
+    Cloud storage, Cloud services, Virtual Machines, File synchronisation, Large Similar Files, Application Programming Interfaces
 \end{keywordsen}
 \end{abstracten}
 
 
 % Acknowledgements
 \begin{acknowledgementsgr}
-  Η παρούσα διπλωματική εργασία σημαίνει την ολοκλήρωση ενός σημαντικού
-  κεφαλαίου της ακαδημαϊκής μου πορείας. Θα ήθελα στο σημείο αυτό να
-  ευχαριστήσω ορισμένους ανθρώπους που με βοήθησαν στη διαδρομή αυτή.
-  -Ευχαριστίες-
+  Η παρούσα διπλωματική εργασία σημαίνει την ολοκλήρωση ενός σημαντικού κεφαλαίου της ακαδημαϊκής μου πορείας. Θα ήθελα στο σημείο αυτό να ευχαριστήσω ορισμένους ανθρώπους που με βοήθησαν στη διαδρομή αυτή.
+
+  Αρχικά θα ήθελα να ευχαριστήσω τον καθηγητή μου Νεκτάριο Κοζύρη, που μου επέτρεψε να ασχοληθώ με ένα σύγχρονο θέμα που παρουσιάζει ιδιαίτερο πρακτικό ενδιαφέρον. Οφείλω επίσης ένα μεγάλο ευχαριστώ στο Δρα Βαγγέλη Κούκη, για την ομαλή μας συνεργασία, την επιστημονική καθοδήγηση και την ενθάρρυνση που μου προσέφερε κατά τη διάρκεια της διπλωματικής εργασίας, όπως επίσης και για το γεγονός πως με τις διαλέξεις του ενίσχυσε σημαντικά το ενδιαφέρον μου σε αυτό τον τομέα.
+
+  Θα ήθελα επίσης να ευχαριστήσω τους συμφοιτητές, συνεργάτες και φίλους που ομόρφυναν σημαντικά τα χρόνια της φοίτησής μου, Ελένη, Γρηγόρη, Ορέστη Α., Διονύση, Αλέξανδρο, Στέργιο, Σοφία, Ορέστη Β., Δημήτρη, Νίκο, Θάλεια, Μανώλη και Λυδία, όπως και τους φίλους μου Γιώργο, Έλενα, Πωλίνα, Σπύρο, Νίκο και Τίνα και άρκετούς ακόμη που ίσως αυτή τη στιγμή να μου διαφεύγουν.
+
+  Τέλος, θα ήθελα να ευχαριστήσω τους γονείς μου, Αλέξανδρο και Χαρά, και τον αδερφό μου, Σταύρο, για τη συνεχή υποστήριξη και συμπαράσταση που μου προσέφεραν εώς τώρα.
 \end{acknowledgementsgr}
