@@ -1,6 +1,6 @@
-.PHONY: FORCE default clean distclean
-
+.PHONY: FORCE default clean
 FILE=thesis
+.PRECIOUS: $(FILE).pdf
 
 default: $(FILE).pdf
 
