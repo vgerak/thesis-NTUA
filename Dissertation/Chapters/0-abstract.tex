@@ -1,6 +1,7 @@
 % Abstract, in Greek
+\onehalfspacing
 \begin{abstractgr}
-  -Περίληψη-
+  Η αυξημένη χρήση των Εικονικών Μηχανών στις διάφορες υπηρεσίες νέφους οδήγησε στη δημιουργία ενός μεγάλου αριθμού αρχείων εικόνων και στιγμιοτύπων εικονικών μηχανών. Γεννήθηκε έτσι η ανάγκη για
 \begin{keywordsgr}
     Αποθηκευτικό Νέφος, Υπηρεσίες Νέφους, Εικονικές Μηχανές, Συγχρονισμός αρχείων, Μεγάλα Ομοιόμορφα Αρχεία, Προγραμματιστικές Διεπαφές Εφαρμογών
 \end{keywordsgr}
@@ -9,11 +10,13 @@
 
 % Abstract, in English
 \begin{abstracten}
-  The increased use of Virtual Machines in cloud service infrastructures has resulted in a large volume of disk image and snapshot files. As a result, a reliable and efficient way of synchronising those files between different computers is needed. Software applications that achieves file synchronisation already exist, but none is tailored specifically for this task. Understanding the special characteristics of the files in question, the fact that they are large in size and have most of their data in commmon, allows us optimise the synchronisation process for that use case.
+  The increased use of Virtual Machines in cloud service infrastructures has resulted in a large volume of disk image and snapshot files. As a result, a reliable and efficient way of synchronising those files between different computers is needed. Software applications that achieve file synchronisation already exist, but none is tailored specifically for this task. Understanding the special characteristics of the files in question, the fact that they are large in size and have most of their data in commmon, allows us optimise the synchronisation process for that use case.
 
   The aim of this dissertation is to present the design of a synchronisation framework for large similar files, using cloud storage services, written in Python. We study existing implementations of file syncing, understand the underlying design choices and make further improvements on them. We propose a synchronisation algorithm that reliably and efficiently detects and handles updates. We also propose the use of abstract classes to represent files, local directories and cloud storage service APIs. The APIs exposed by those classes allow more flexibility to the framework, so it can operate over different OSs and cloud storage services.
 
-  After the presentation of the initial design, we propose and implement several optimisations that further improve the performance of the synchronisation process. <more>
+  After the presentation of the initial design, we propose and implement several optimisations that further improve the performance of the synchronisation process and benchmark their effects on the execution time. The use of threads to concurrently request resources from a remote server reduces the effect of network latency and the use of directory monitoring mechanisms (such as inotify) results in fast and efficient discovery of modified files. Further focusing on the use case of large, similar files, we propose local storage of the files' blocks so only the parts that differ can be downloaded from the server, which boasts a significant improvement in download times. Finally, in order to alleviate the storage space needs that the last improvement introduces, we propose the use of a Filesystem in Userspace (FUSE) mechanism to virtually create and access files, while storing each shared block only once.
+
+  In the final parts of this dissertation, we compare the proposed features and performance with that of several synchronisation software and packages and discuss their suitability for the use case described. We also propose further improvements in the synchronisation process that have been planned but not yet thoroughly designed and implemented.
 
 \begin{keywordsen}
     Cloud storage, Cloud services, Virtual Machines, File synchronisation, Large Similar Files, Application Programming Interfaces
@@ -31,3 +34,4 @@
 
   Τέλος, θα ήθελα να ευχαριστήσω τους γονείς μου, Αλέξανδρο και Χαρά, και τον αδερφό μου, Σταύρο, για τη συνεχή υποστήριξη και συμπαράσταση που μου προσέφεραν εώς τώρα.
 \end{acknowledgementsgr}
+\singlespacing

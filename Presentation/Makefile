@@ -1,6 +1,6 @@
 .PHONY: FORCE default clean distclean
 
-FILE=thesis
+FILE=thesis-presentation
 
 default: $(FILE).pdf
 
