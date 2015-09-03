@@ -1,7 +1,7 @@
 thesis
 ======
 * [About](#about)
-* [Fonts](#fonts/styles)
+* [Fonts / Styles](#fonts--styles)
 * [How-to](#how-to)
 
 ## About ##
